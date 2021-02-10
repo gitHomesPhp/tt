@@ -1,0 +1,38 @@
+version: '3.1'
+
+services:
+    redis:
+        container_name: redis_container
+        image: redis:6.0.10
+        ports:
+            - 6379:6379
+        networks:
+            - static
+    php:
+        container_name: ${APP_NAME}_php
+        build: ./docker/php
+        user: ${UID}:${GID}
+        volumes:
+            - ${APP_PATH}:/app
+        networks:
+            - static
+    nginx:
+        container_name: ${APP_NAME}_nginx
+        image: nginx:1.19.6
+        ports:
+            - 80:80
+        volumes:
+            - ${APP_PATH}:/app
+            - ./docker/nginx/site.conf:/etc/nginx/conf.d/site.conf
+        environment:
+            - NGINX_PORT=80
+        depends_on:
+            - php
+        networks:
+            - static
+networks:
+    static:
+        driver: bridge
+        ipam:
+            config:
+                - subnet: ${SUBNET}
