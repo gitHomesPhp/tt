@@ -9,7 +9,7 @@ services:
         networks:
             - static
     php:
-        container_name: ${APP_NAME}_php
+        container_name: env_php
         build: ./docker/php
         user: ${UID}:${GID}
         volumes:
